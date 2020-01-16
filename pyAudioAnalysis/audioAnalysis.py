@@ -504,7 +504,7 @@ def parse_arguments():
                         help="smoothing window size in seconds.")
     silrem.add_argument("-w", "--weight", type=float, default=0.5,
                         help="weight factor in (0, 1)")
-    silrem.add_argument("-p", "--plot", type=bool, default=False, action="store_true"
+    silrem.add_argument("-p", "--plot", type=bool, default=False, action="store_true",
                         help="flag to plot the data")
 
     spkrDir = tasks.add_parser("speakerDiarization")
