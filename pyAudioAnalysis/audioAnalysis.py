@@ -214,13 +214,13 @@ def segmentationEvaluation(dirName, model_name, methodName):
     aS.evaluateSegmentationClassificationDir(dirName, model_name, methodName)
 
 
-def silenceRemovalWrapper(inputFile, smoothingWindow, weight):
+def silenceRemovalWrapper(inputFile, smoothingWindow, weight, plot):
     if not os.path.isfile(inputFile):
         raise Exception("Input audio file not found!")
 
     [fs, x] = audioBasicIO.read_audio_file(inputFile)
     segmentLimits = aS.silenceRemoval(x, fs, 0.05, 0.05,
-                                      smoothingWindow, weight, True)
+                                      smoothingWindow, weight, plot)
     for i, s in enumerate(segmentLimits):
         strOut = "{0:s}_{1:.3f}-{2:.3f}.wav".format(inputFile[0:-4], s[0], s[1])
         wavfile.write(strOut, fs, x[int(fs * s[0]):int(fs * s[1])])
@@ -504,6 +504,8 @@ def parse_arguments():
                         help="smoothing window size in seconds.")
     silrem.add_argument("-w", "--weight", type=float, default=0.5,
                         help="weight factor in (0, 1)")
+    silrem.add_argument("-p", "--plot", type=bool, default=False, action="store_true"
+                        help="flag to plot the data")
 
     spkrDir = tasks.add_parser("speakerDiarization")
     spkrDir.add_argument("-i", "--input", required=True,
@@ -605,7 +607,7 @@ if __name__ == "__main__":
     elif args.task == "silenceRemoval":
         # Detect non-silent segments in a WAV file and
         # output to seperate WAV files
-        silenceRemovalWrapper(args.input, args.smoothing, args.weight)
+        silenceRemovalWrapper(args.input, args.smoothing, args.weight, args.plot)
     elif args.task == "speakerDiarization":
         # Perform speaker diarization on a WAV file
         speakerDiarizationWrapper(args.input, args.num, args.flsd)
